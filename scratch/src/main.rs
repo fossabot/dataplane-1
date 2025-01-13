@@ -7,7 +7,7 @@ use dpdk_sys::*;
 use std::ffi::{c_uint, CStr, CString};
 use std::fmt::{Debug, Display};
 use std::io;
-use std::net::Ipv4Addr;
+use std::net::{Ipv4Addr, Ipv6Addr};
 use std::time::Instant;
 use tracing::{debug, error, info, trace, warn};
 
@@ -52,6 +52,129 @@ pub fn fatal_error<T: Display + AsRef<str>>(message: T) -> ! {
 }
 
 const MAX_PATTERN_NUM: usize = 8;
+
+#[tracing::instrument(level = "debug")]
+fn generate_nat64_flow(
+    port_id: u16,
+    src_ip: Ipv6Addr,
+    src_mask: Ipv6Addr,
+    dest_ip: Ipv6Addr,
+    dest_mask: Ipv6Addr,
+    err: &mut rte_flow_error,
+    //) -> RteFlow {
+) {
+    let action_nat64 = rte_flow_action {
+        type_: rte_flow_action_type::RTE_FLOW_ACTION_TYPE_NAT64,
+        conf: &rte_flow_action_nat64 {
+            type_: rte_flow_nat64_type::RTE_FLOW_NAT64_6TO4,
+            ..Default::default()
+        } as *const _ as *const _,
+    };
+
+    let ip_spec = rte_flow_item_ipv6 {
+        hdr: rte_ipv6_hdr {
+            src_addr: dpdk_sys::rte_ipv6_addr { a: src_ip.octets() },
+            dst_addr: dpdk_sys::rte_ipv6_addr {
+                a: dest_ip.octets(),
+            },
+            ..Default::default()
+        },
+        ..Default::default()
+    };
+
+    let ip_mask = rte_flow_item_ipv6 {
+        hdr: rte_ipv6_hdr {
+            src_addr: dpdk_sys::rte_ipv6_addr {
+                a: src_mask.octets(),
+            },
+            dst_addr: dpdk_sys::rte_ipv6_addr {
+                a: dest_mask.octets(),
+            },
+            ..Default::default()
+        },
+        ..Default::default()
+    };
+
+    let action_set_dstip = rte_flow_action {
+        type_: rte_flow_action_type::RTE_FLOW_ACTION_TYPE_SET_IPV4_DST,
+        conf: &rte_flow_action_set_ipv4 {
+            ipv4_addr: htonl(Ipv4Addr::new(192, 168, 1, 1)),
+        } as *const _ as *const _,
+    };
+
+    let mut attr: rte_flow_attr = rte_flow_attr::default();
+    let mut pattern: [rte_flow_item; MAX_PATTERN_NUM] = Default::default();
+    let mut action: [rte_flow_action; MAX_PATTERN_NUM] = Default::default();
+
+    attr.set_ingress(1);
+
+    action[0] = action_nat64;
+    action[1] = action_set_dstip;
+    action[2].type_ = rte_flow_action_type::RTE_FLOW_ACTION_TYPE_END;
+
+    pattern[0].type_ = rte_flow_item_type::RTE_FLOW_ITEM_TYPE_ETH;
+    pattern[1].type_ = rte_flow_item_type::RTE_FLOW_ITEM_TYPE_IPV6;
+    pattern[1].spec = &ip_spec as *const _ as *const _;
+    pattern[1].mask = &ip_mask as *const _ as *const _;
+    pattern[2].type_ = rte_flow_item_type::RTE_FLOW_ITEM_TYPE_END;
+
+    let res = unsafe {
+        rte_flow_validate(
+            port_id,
+            &attr as *const _,
+            pattern.as_ptr(),
+            action.as_ptr(),
+            err,
+        )
+    };
+
+    if res != 0 {
+        let err_str = unsafe { rte_strerror(res) };
+        let err_msg = format!(
+            "Failed to validate flow: {err_str}",
+            err_str = unsafe { CStr::from_ptr(err_str) }.to_str().unwrap()
+        );
+        fatal_error(err_msg.as_str());
+    }
+
+    /*
+    let flow = unsafe {
+        rte_flow_create(
+            port_id,
+            &attr as *const _,
+            pattern.as_ptr() as *const _,
+            action.as_ptr() as *const _,
+            err,
+        )
+    };
+
+    if flow.is_null() || !err.message.is_null() {
+        if err.message.is_null() {
+            fatal_error("Failed to create flow: unknown error");
+        }
+        let err_str = unsafe { CStr::from_ptr(err.message) };
+        fatal_error(err_str.to_str().unwrap());
+    }
+
+    debug!("Flow created");
+
+    RteFlow::new(port_id, flow)
+    */
+}
+
+fn nat64_test(port_id: u16) {
+    let port_id = 0;
+    let src_ip = Ipv6Addr::from(rand::random::<u128>());
+    let src_mask = Ipv6Addr::new(
+        0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
+    );
+    let dst_ip = Ipv6Addr::from(rand::random::<u128>());
+    let dst_mask = Ipv6Addr::new(
+        0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
+    );
+    let mut err = rte_flow_error::default();
+    generate_nat64_flow(port_id, src_ip, src_mask, dst_ip, dst_mask, &mut err);
+}
 
 #[tracing::instrument(level = "debug")]
 fn generate_ipv4_flow(
@@ -727,6 +850,10 @@ fn eal_main() {
             .unwrap();
         my_dev.start().unwrap();
 
+        let port_id = my_dev.info.index().0;
+        nat64_test(port_id);
+
+        /*
         let mut start = Instant::now();
 
         for i in 0..50_000_000 {
@@ -785,6 +912,7 @@ fn eal_main() {
         //         &mut err,
         //     );
         // }
+        */
     });
 }
 
