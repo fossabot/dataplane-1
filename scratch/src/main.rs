@@ -102,7 +102,10 @@ fn generate_nat64_flow(
         } as *const _ as *const _,
     };
 
-    let mut attr: rte_flow_attr = rte_flow_attr::default();
+    let mut attr: rte_flow_attr = rte_flow_attr {
+        group: 1,
+        ..rte_flow_attr::default()
+    };
     let mut pattern: [rte_flow_item; MAX_PATTERN_NUM] = Default::default();
     let mut action: [rte_flow_action; MAX_PATTERN_NUM] = Default::default();
 
@@ -115,7 +118,7 @@ fn generate_nat64_flow(
     pattern[0].type_ = rte_flow_item_type::RTE_FLOW_ITEM_TYPE_ETH;
     pattern[1].type_ = rte_flow_item_type::RTE_FLOW_ITEM_TYPE_IPV6;
     pattern[1].spec = &ip_spec as *const _ as *const _;
-    pattern[1].mask = &ip_mask as *const _ as *const _;
+    // pattern[1].mask = &ip_mask as *const _ as *const _;
     pattern[2].type_ = rte_flow_item_type::RTE_FLOW_ITEM_TYPE_END;
 
     let res = unsafe {
@@ -129,7 +132,7 @@ fn generate_nat64_flow(
     };
 
     if res != 0 {
-        let err_str = unsafe { rte_strerror(res) };
+        let err_str = unsafe { rte_strerror(-res) };
         let err_msg = format!(
             "Failed to validate flow: {err_str}",
             err_str = unsafe { CStr::from_ptr(err_str) }.to_str().unwrap()
