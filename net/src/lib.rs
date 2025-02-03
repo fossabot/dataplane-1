@@ -3,6 +3,8 @@
 
 //! A library for working with and validating network data
 
+#![doc = include_str!("README.md")]
+
 #![deny(
     unsafe_code,
     missing_docs,

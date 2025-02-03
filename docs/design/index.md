@@ -266,4 +266,4 @@ The control plane is, for the moment, just [bgpd] and [bfdd].
 
 </section>
 
-{{#include ../links.md}}
+{{#include ../../links.md}}

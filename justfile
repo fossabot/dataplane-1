@@ -458,7 +458,6 @@ report:
 mdbook *args="build":
     {{ _just_debuggable_ }}
     mkdir -p /tmp/doc-env
-    cd ./design-docs/src/mdbook
     docker pull {{ _doc_env_container }}
     docker run \
       --rm \

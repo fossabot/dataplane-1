@@ -1,17 +1,5 @@
 figureBlockquoteToCaption = () => {
 	const figures = document.querySelectorAll('figure');
-	figures.forEach((figure, i) => {
-		if (!figure.title) {
-			console.warn("No title for figure!", figure);
-			figure.title = `untitled-fig ${i + 1}`;
-		}
-		figure.setAttribute('aria-label', figure.title);
-	});
-	figures.forEach((figure, _i) => {
-		if (!figure.id) {
-				figure.id = `figure/${figure.title.replace(/\s/g, '-').toLowerCase()}`;
-		}
-	});
 	figures.forEach(figure => {
 		const blockquote = figure.querySelector('blockquote:last-child');
 		if (!blockquote) {

@@ -2,9 +2,12 @@
 **/target/**
 /.bin/**
 /.vscode/**
+/compile-env
 /compile-env/**
 /design-docs/src/mdbook/book/**
 /design-docs/src/mdbook/src/mdbook-plantuml-img/**
 /dev-env-template/**
 **/__fuzz__/**
 **.profraw
+/.generated-docs
+

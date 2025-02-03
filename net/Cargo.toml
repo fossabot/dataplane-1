@@ -17,6 +17,7 @@ etherparse = { workspace = true, features = ["std"] }
 serde = { workspace = true, optional = true, features = ["derive"] }
 thiserror = { workspace = true }
 tracing = { workspace = true }
+rsdoc = { workspace = true }
 
 [dev-dependencies]
 arbitrary = { workspace = true, features = ["derive"] }

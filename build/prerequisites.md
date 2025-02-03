@@ -20,14 +20,14 @@ You will need the following before we can begin.
 
   You can install `just` via your package manager, but I recommend installing it via `cargo` as it will likely be more up to date.
 
-  ```
+  ```bash
   cargo install just
   ```
   
   or, if you have [cargo-binstall], run
 
 
-  ```
+  ```bash
   cargo binstall just
   ```
 

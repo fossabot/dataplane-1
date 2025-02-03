@@ -14,10 +14,16 @@ At a very high level, these are the _user facing_ features that we require to re
 
 ## User-facing features
 
-<figure title="User-facing feature dependencies">
+
+<figure>
+
+### User-facing feature dependencies
+
+![User-facing feature dependencies](user-facing-feature-dependencies.svg)
+<details>
 
 ```plantuml
-@startdot
+@startdot user-facing-feature-dependencies.svg
 digraph features {
 labelloc=t
 graph [ranksep=0.6]
@@ -52,16 +58,22 @@ rate_limiting -> Telemetry [xlabel="weak"];
 @enddot
 ```
 
+<summary>
+
 > A graph of the functional dependencies between the required _user facing_ features.
 > Each node on the graph represents a feature.
 > No feature can be _completed_ without all of the other features which point to it.
-
+</summary>
+</details>
 </figure>
 
 <figure title="Major feature dependencies (internal)">
 
+![Major feature dependencies (internal)](./major-feature-dependencies-internal.svg)
+
+<!--
 ```plantuml
-@startdot
+@startdot major-feature-dependencies-internal.svg
 digraph features {
   labelloc=t
   node [shape="box"]
@@ -117,6 +129,7 @@ digraph features {
 }
 @enddot
 ```
+-->
 
 > Here is a _very_ high-level graph of the functional dependencies between the required features.
 > Each node on the graph represents a feature.
