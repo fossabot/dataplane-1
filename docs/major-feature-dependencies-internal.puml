@@ -1,0 +1,54 @@
+@startdot
+digraph features {
+  labelloc=t
+  node [shape="box"]
+  graph [ranksep=0.8]
+
+  BGP_underlay [ label="BGP underlay", style=filled, color="lightblue" ]
+  EVPN_overlay [ label="EVPN overlay", style=filled, color="lightblue" ]
+  VPC_routing [ label="VPC routing\n(aka RIOT)", style=filled, color="lightblue" ]
+  VPC_nat44_66 [ label="VPC nat44/66", style=filled, color="lightblue" ]
+  VPC_nat64 [ label="VPC nat64", style=filled, color="lightblue" ]
+  telemetry [ label="Telemetry/observability", style=filled, color="lightblue" ]
+  rate_limiting [ label="Rate limiting", style=filled, color="lightblue" ]
+  fault_tolerance [ label="Fault tolerance", style=filled, color="lightblue" ]
+  Management_API [ label="Management API", style=filled, color="lightblue" ]
+
+  control_plane_integration [ label="control plane integration"]
+  state_sync [ label="state sync" ]
+  hardware_offloaded_nat [ label="offload nat" ]
+  hardware_offloaded_routing [ label="Underlay route offload" ]
+  hardware_offloaded_vpc [ label="VPC route offload" ]
+  hardware_offloading_basic [ label="basic offloading" ]
+  datastore_integration [ label="datastore integration" ]
+
+  all [label="*"]
+  Management_API -> all
+  all -> Management_API
+
+  datastore_integration -> control_plane_integration
+  datastore_integration -> hardware_offloaded_routing
+  hardware_offloading_basic -> hardware_offloaded_routing
+  hardware_offloaded_routing -> BGP_underlay
+  fault_tolerance -> VPC_nat44_66
+  fault_tolerance -> VPC_nat64
+  BGP_underlay -> EVPN_overlay
+  EVPN_overlay -> VPC_routing
+  EVPN_overlay -> state_sync
+  EVPN_overlay -> hardware_offloaded_vpc
+  hardware_offloaded_nat -> VPC_nat44_66
+  hardware_offloaded_nat -> VPC_nat64
+  VPC_nat44_66 -> telemetry [xlabel="weak"]
+  VPC_nat64 -> telemetry [xlabel="weak"]
+  VPC_routing -> telemetry
+  VPC_routing -> VPC_nat44_66
+  VPC_routing -> VPC_nat64
+  VPC_routing -> rate_limiting
+  control_plane_integration -> BGP_underlay
+  state_sync -> fault_tolerance
+  hardware_offloaded_vpc -> hardware_offloaded_nat
+  hardware_offloaded_vpc -> rate_limiting
+  hardware_offloading_basic -> hardware_offloaded_vpc
+  rate_limiting -> telemetry [xlabel="weak"]
+}
+@enddot

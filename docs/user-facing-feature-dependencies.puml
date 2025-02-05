@@ -1,0 +1,33 @@
+@startdot user-facing-feature-dependencies.svg
+digraph features {
+labelloc=t
+graph [ranksep=0.6]
+
+node[shape="rect"]
+BGP_underlay [ label="BGP underlay", style=filled, color="lightblue"]
+EVPN_overlay [ label="EVPN overlay", style=filled, color="lightblue"]
+VPC_routing [ label="VPC routing", style=filled, color="lightblue"]
+VPC_nat44_66 [ label="VPC nat44/66", style=filled, color="lightblue"]
+VPC_nat64 [ label="VPC nat64", style=filled, color="lightblue"]
+Telemetry [ label="Telemetry/observability", style=filled, color="lightblue"]
+rate_limiting [ label="Rate limiting", style=filled, color="lightblue"]
+Fault_tolerance [ label="Fault tolerance", style=filled, color="lightblue"]
+Management_API [label="Management API", style=filled, color="lightblue"]
+all [label="*"]
+all -> Management_API
+Management_API -> all
+
+BGP_underlay -> EVPN_overlay;
+EVPN_overlay -> VPC_routing;
+VPC_routing -> VPC_nat44_66;
+VPC_routing -> VPC_nat64;
+VPC_routing -> rate_limiting;
+EVPN_overlay -> Fault_tolerance;
+Fault_tolerance -> VPC_nat64;
+Fault_tolerance -> VPC_nat44_66;
+VPC_routing -> Telemetry;
+VPC_nat44_66 -> Telemetry [xlabel="weak"];
+VPC_nat64 -> Telemetry [xlabel="weak"];
+rate_limiting -> Telemetry [xlabel="weak"];
+}
+@enddot
