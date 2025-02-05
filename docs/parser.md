@@ -33,48 +33,16 @@ Fortunately, it was a tractable problem to wrap `etherparse`'s functionality in 
 
 ### How the parser works
 
-<!--
-```plantuml
-@startdot how-the-parser-works.svg
-!$ptr=./tasks
-!$optional="color=lightyellow, style=filled"
-!$started="color=lightblue, style=filled"
-!$completed="color=lightgreen, style=filled"
-!$urgent="color=orange, style=filled"
-!$difficult="color=pink, style=filled"
-digraph g {
-  node [shape="box"]
-  splines=ortho;
-  
-  graph [ranksep=0.9]
-  labelloc=t
-  overlap=false;
-  concentrate="true";
-  remincross=true;
-  mclimit=800;
-  compound=true;
-  
-  Parse [label=<Parse>, href="TODO"]
-  ParseWith [label=<ParseWith>, href="TODO"]
-  ParsePayload [label=<ParsePayload>, href="TODO"]
-  ParsePayloadWith [label=<ParsePayloadWith>, href="TODO"]
-  
-  DeParse [label=<DeParse>, href="TODO"]
-  
-  VariousHeaderTypes [label=<various header types>]
-  
-  Reader [label=<Reader>]
-  Writer [label=<Writer>]
-  Packet [label=<Packet>]
-  
-  Parse <- VariousHeaderTypes
+![how the parser works](./how-the-parser-works.svg?sanitize=true)
 
-}
-@enddot
+<details hidden>
+
+```plantuml
 ```
+</details>
 
 ```plantuml
-@startuml
+@startuml packet-relationships.svg
 !pragma use toez
 skinparam linetype ortho
 skinparam hyperlinkUnderline false
@@ -94,7 +62,6 @@ Packet --o| NetExt
 
 @enduml
 ```
--->
 
 
 

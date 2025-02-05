@@ -2,13 +2,22 @@
 
 - [README.md](./README.md)
   - [net](./net/README.md)
-- [Design](./docs/design/index.md)
-  - [MVP](./docs/design/mvp.md)
-  - [Packet Parsing and Manipulation](./docs/design/parser.md)
-- [Build process](./build/README.md)
-  - [Prerequisites](./build/prerequisites.md)
-  - [Compile env](./build/compile-env.md)
-  - [fake-nix](./build/fake-nix.md)
-  - [Build dataplane](./build/just-cargo-build.md)
-  - [Sterile builds](./build/sterile-build.md)
-- [DPDK abstraction map](./docs/dataplane/map-of-dpdk.md)
+- [Design](./docs/index.md)
+
+[//]: # (  - [MVP]&#40;./docs/design/mvp.md&#41;)
+
+[//]: # (  - [Packet Parsing and Manipulation]&#40;./docs/design/parser.md&#41;)
+
+[//]: # (- [Build process]&#40;./build/README.md&#41;)
+
+[//]: # (  - [Prerequisites]&#40;./build/prerequisites.md&#41;)
+
+[//]: # (  - [Compile env]&#40;./build/compile-env.md&#41;)
+
+[//]: # (  - [fake-nix]&#40;./build/fake-nix.md&#41;)
+
+[//]: # (  - [Build dataplane]&#40;./build/just-cargo-build.md&#41;)
+
+[//]: # (  - [Sterile builds]&#40;./build/sterile-build.md&#41;)
+
+[//]: # (- [DPDK abstraction map]&#40;./docs/dataplane/map-of-dpdk.md&#41;)

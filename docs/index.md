@@ -2,107 +2,16 @@
 
 <figure title="Component Map">
 
-```puml
-@startuml
-skinparam hyperlinkUnderline false
-skinparam linetype ortho
-!unquoted function $link($name, $url)
-!return "[[" + $url + " " + $name + "]]"
-!endfunction
+![$TITLE](./component-map.svg?sanitize=true)
 
-<style>
-</style>
+{{#include ./component-map.svg}}
 
-!$q = { "uote": "\"" }
+<figcaption>
 
-!$doc_links = {
-  "config_store": { "text": "Configuration Store", "url": "#configuration-store" },
-  "gateway_agent": { "text": "Gateway Agent", "url": "#gateway-agent" },
-  "frr_agent": { "text": "FRR agent", "url": "#frr-agent" },
-  "zebra": { "text": "zebra", "url": "https://docs.frrouting.org/en/latest/zebra.html" },
-  "routing_daemons": { "text": "routing daemons", "url": "#routing-daemons" },
-  "zebra_plugin": { "text": "Zebra\\nplugin", "url": "#zebra-plugin" },
-  "kernel": { "text": "kernel", "url": "https://en.wikipedia.org/wiki/Linux_kernel" },
-  "interface_manager": { "text": "interface manager", "url": "#interface-manager" },
-  "routing_manager": { "text": "routing manager", "url": "#routing-manager" },
-  "dataplane_workers": { "text": "dataplane workers", "url": "#dataplane-workers" },
-  "nat_manager": { "text": "nat manager", "url": "#nat-manager" },
-  "control_plane_interface": { "text": "control plane interface", "url": "#control-plane-interface" },
-  "management_plane_interface": { "text": "management plane interface", "url": "#management-plane-interface" },
-  "state_sync": { "text": "state sync", "url": "#state-sync" },
-  "dataplane_model": { "text": "dataplane model", "url": "#dataplane-model" },
-  "management_plane": { "text": "management plane", "url": "#management-plane" },
-  "control_plane": { "text": "control plane", "url": "#control-plane" },
-  "dataplane": { "text": "dataplane", "url": "#dataplane" }
-}
+> Biscuits
+</figcaption>
+</figure>
 
-!unquoted function $linked($key)
-	!return $link($doc_links[$key].text, $doc_links[$key].url)
-!endfunction
-
-!unquoted function $r($key)
-  !return "rectangle " + $key + " as " + $q.uote + $linked($key) + $q.uote
-!endfunction
-
-!unquoted function $db($key)
-  !return "database " + $key + " as " + $q.uote + $linked($key) + $q.uote
-!endfunction
-
-$r(management_plane) {
-  $r(gateway_agent)
-  $db(config_store)
-}
-
-$r(kernel)
-
-$r(control_plane) {
-  $r(routing_daemons)
-  $r(zebra) {
-    $r(zebra_plugin)
-  }
-  $r(frr_agent)
-}
-
-$r(dataplane) {
-  $r(control_plane_interface)
-  $r(management_plane_interface)
-  $db(dataplane_model)
-  $r(routing_manager)
-  $r(nat_manager)
-  $r(state_sync)
-  $r(interface_manager)
-  $r(dataplane_workers)
-}
-
-rectangle sister_dataplane as "sister dataplane" {
-  rectangle rest as "..."
-  rectangle sister_state_sync as "state sync"
-}
-
-rectangle nics
-
-control_plane_interface -- dataplane_model
-dataplane_workers <--> nics : [[ https://www.dpdk.org/ dpdk ]]
-frr_agent <--> routing_daemons
-frr_agent <--> zebra
-gateway_agent -- frr_agent
-gateway_agent -- management_plane_interface
-config_store -- gateway_agent
-interface_manager -- dataplane_model
-interface_manager <--> kernel : [[ https://man7.org/linux/man-pages/man7/netlink.7.html netlink socket ]]
-dataplane_model - state_sync
-dataplane_model <--> nat_manager
-dataplane_model <--> routing_manager
-management_plane_interface -- dataplane_model
-nat_manager <--> dataplane_workers
-zebra_plugin --- control_plane_interface : [[ https://en.wikipedia.org/wiki/Unix_domain_socket unix socket ]]
-routing_daemons <-> zebra
-routing_manager <--> dataplane_workers
-state_sync <-> sister_state_sync : [[ https://en.wikipedia.org/wiki/Remote_direct_memory_access rdma]]
-zebra <-> kernel : [[ https://man7.org/linux/man-pages/man7/netlink.7.html netlink socket ]]
-
-@enduml
-```
 
 > Map of the relationships between planned dataplane components
 
@@ -266,4 +175,6 @@ The control plane is, for the moment, just [bgpd] and [bfdd].
 
 </section>
 
-{{#include ../../links.md}}
+<!-- internal -->
+
+[dataplane worker]: /dataplane/design.md#dataplane-workers
