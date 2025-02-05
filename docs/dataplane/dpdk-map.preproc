@@ -1,0 +1,51 @@
+@startuml
+!pragma use toez
+skinparam linetype ortho
+skinparam hyperlinkUnderline false
+hide empty description
+hide empty members
+hide circle
+
+
+
+
+
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#pattern-item flow_item]]" as flow_item
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#pattern-templates flow_item_template]]" as flow_item_template
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#actions flow_action]]" as flow_action
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#actions-templates flow_action_template]]" as flow_action_template
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#action-indirect flow_action_indirect]]" as flow_action_indirect
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#action-indirect-list flow_action_indirect_list]]" as flow_action_indirect_list
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/switch_representation.html switch_domain]]" as switch_domain
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html#attribute-group flow_table]]" as flow_table
+	entity "[[https://doc.dpdk.org/guides-24.11/prog_guide/ethdev/flow_offload.html flow]]" as flow
+	entity "[[https://inbox.dpdk.org/dev/1565703468-55617-1-git-send-email-orika@mellanox.com/ hairpin_queue]]" as hairpin_queue
+	entity "[[https://doc.dpdk.org/guides/prog_guide/mbuf_lib.html membuf]]" as membuf
+	entity "[[https://doc.dpdk.org/guides/prog_guide/mempool_lib.html mempool]]" as mempool
+	entity "[[#define/socket_id socket_id]]" as socket_id
+	entity "[[https://doc.dpdk.org/guides/nics/index.html eth_dev]]" as eth_dev
+	entity "[[https://doc.dpdk.org/guides/prog_guide/ring_lib.html queue_rx]]" as queue_rx
+	entity "[[https://doc.dpdk.org/guides/prog_guide/ring_lib.html queue_tx]]" as queue_tx
+	entity "[[#define/socket_index socket_index]]" as socket_index
+
+eth_dev }|---o| switch_domain
+eth_dev ||--o{ queue_rx
+eth_dev ||---o{ queue_tx
+eth_dev ||--{ flow_table
+flow ||--{ flow_action
+flow ||--{ flow_item
+flow_action ||--o| flow_action_indirect
+flow_action }o--o| flow_action_indirect_list
+flow_action_indirect_list |o-o{ flow_action_indirect
+flow_table ||---o| flow_action_template
+flow_table ||---o| flow_item_template
+flow_table ||--o{ flow
+mempool ||--o{ membuf
+mempool }--o{ queue_rx
+queue_rx ||--o| hairpin_queue
+queue_tx ||--o| hairpin_queue
+socket_id |o--o{ eth_dev
+socket_id ||--o{ mempool
+socket_index ||-|| socket_id
+switch_domain ||--o| hairpin_queue
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+!pragma use toez
+skinparam linetype ortho
+skinparam hyperlinkUnderline false
+hide empty description
+hide empty members
+hide circle
+
+entity flow_item
+entity flow_item_template
+entity flow_action
+entity flow_action_template
+entity flow_action_indirect
+entity flow_action_indirect_list
+entity switch_domain
+entity flow_table
+entity flow
+entity hairpin_queue
+entity membuf
+entity mempool
+entity socket_id
+entity eth_dev
+entity queue_rx
+entity queue_tx
+entity socket_index
+
+eth_dev }|---o| switch_domain
+eth_dev ||--o{ queue_rx
+eth_dev ||---o{ queue_tx
+eth_dev ||--{ flow_table
+flow ||--{ flow_action
+flow ||--{ flow_item
+flow_action ||--o| flow_action_indirect
+flow_action }o--o| flow_action_indirect_list
+flow_action_indirect_list |o-o{ flow_action_indirect
+flow_table ||---o| flow_action_template
+flow_table ||---o| flow_item_template
+flow_table ||--o{ flow
+mempool ||--o{ membuf
+mempool }--o{ queue_rx
+queue_rx ||--o| hairpin_queue
+queue_tx ||--o| hairpin_queue
+socket_id |o--o{ eth_dev
+socket_id ||--o{ mempool
+socket_index ||-|| socket_id
+switch_domain ||--o| hairpin_queue
+@enduml
